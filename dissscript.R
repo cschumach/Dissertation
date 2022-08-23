@@ -29,7 +29,7 @@ studydf <- df %>% select(pid, W1_Paranoia1, W1_Paranoia2 , W1_Paranoia3, W1_Para
 is.na.data.frame(studydf)
 studydf <- na.omit(studydf)
 
-#normallity testing
+#testing structure of data
 res <-resid(studydf)
 MCLC <- studydf[c,('W1_Paranoia1, W1_Paranoia2 , W1_Paranoia3, W1_Paranoia4, W1_Paranoia5, 
                          W1_Paranoia_Total, W1_Conspiracy_1,W1_Conspiracy_2,W1_Conspiracy_3, W1_Conspiracy_4, 
@@ -63,7 +63,8 @@ Nationalism =~ W1_Nationalism1 + W1_Nationalism2
 '
 cfamodel <- cfa(path1, data = studydf)
 summary(cfamodel, standardized = TRUE, fit.measures = TRUE)
-#base bifactor model
+
+#the first bifactor model
 path0 <-' 
 General =~ W1_Paranoia1 + W1_Paranoia2 + W1_Paranoia3 + W1_Paranoia4 + W1_Paranoia5 + W1_Conspiracy_1 + W1_Conspiracy_2 + W1_Conspiracy_3 + W1_Conspiracy_4 + W1_Conspiracy_5 + W1_ReligiousBelief1 + 
   W1_ReligiousBelief2_R +  W1_ReligiousBelief3 +  W1_ReligiousBelief4_R +  W1_ReligiousBelief5 +  W1_ReligiousBelief6_R +
@@ -83,8 +84,7 @@ bifactormodelbase <- cfa(path0, data = studydf)
 summary(bifactormodelbase, standardized = TRUE, fit.measures = TRUE)
 semPaths(bifactormodelbase, "std","est", layout = 'tree3', bifactor = "General")
 
-#bifactor model THE SUGGESTED MODEL
-
+#bifactor model with death anxiety and CRT loaded through the general factor
 path2 <- '
 General =~ W1_Paranoia1 + W1_Paranoia2 + W1_Paranoia3 + W1_Paranoia4 + W1_Paranoia5 + W1_Conspiracy_1 + W1_Conspiracy_2 + W1_Conspiracy_3 + W1_Conspiracy_4 + W1_Conspiracy_5 + W1_ReligiousBelief1 + 
 W1_ReligiousBelief2_R +  W1_ReligiousBelief3 +  W1_ReligiousBelief4_R +  W1_ReligiousBelief5 +  W1_ReligiousBelief6_R +
@@ -116,7 +116,7 @@ modindices(bifactormodel1)
 #ALL SECOND ORDER BIFACTORS!
 
 
-#second-order bifactor test 2: includes the general factor being correlated to the constructs e.g. paranoia
+#second-order bifactor model 1
 path3 <- '
 General =~Paranoia + Conspiracy + Religion + Political + Nationalism
 Paranoia =~ W1_Paranoia1 + W1_Paranoia2 + W1_Paranoia3 + W1_Paranoia4 + W1_Paranoia5
@@ -132,7 +132,7 @@ bifactormodeltest2 <- cfa(path3, data = studydf)
 summary(bifactormodeltest2, standardized = TRUE, fit.measures = TRUE)
 semPaths(bifactormodeltest2)
 
-#bi-factor test with general loading on death anxiety and CRT measures specifically A BIT CURSED LMAO
+#second order bifactor 2 with death anxiety and CRT loading on the general factor
 path4 <- '
 
 General =~Paranoia + Conspiracy + Religion + Political + Nationalism 
