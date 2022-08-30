@@ -31,18 +31,8 @@ is.na.data.frame(studydf)
 studydf <- na.omit(studydf)
 
 #testing structure of data
-res <-resid(studydf)
-MCLC <- studydf[c,('W1_Paranoia1, W1_Paranoia2 , W1_Paranoia3, W1_Paranoia4, W1_Paranoia5, 
-                         W1_Paranoia_Total, W1_Conspiracy_1,W1_Conspiracy_2,W1_Conspiracy_3, W1_Conspiracy_4, 
-                         W1_Conspiracy_5, W1_Conspiracy_Total, W1_Religion_binary, W1_ReligiousBelief_Total,
-                         W1_ReligiousBelief1,  W1_ReligiousBelief2,  W1_ReligiousBelief3,  W1_ReligiousBelief4,  W1_ReligiousBelief5,
-                         W1_ReligiousBelief6, W1_ReligiousBelief7, W1_ReligiousBelief8, W1_ReligiousBelief2_R, W1_ReligiousBelief4_R, W1_ReligiousBelief6_R, W1_ReligiousBelief8_R,
-                         W1_Political_Scale, W1_Nationalism1, W1_Nationalism2,
-                         W1_DAI1, W1_DAI2,  W1_DAI3, W1_DAI4, W1_DAI5, W1_DAI6,  
-                         W1_DAI7,  W1_DAI8,  W1_DAI9,  W1_DAI10,  W1_DAI11,  W1_DAI12,  W1_DAI13, W1_DAI14,  W1_DAI15,  W1_DAI16,  W1_DAI17,
-                         W1_CRT1, W1_CRT2, W1_CRT3, W1_CRT4, W1_CRT5')]
-#Normality testing
-testdata <- studydf[,2:50]
+#Normality testing/multico test
+testdata <- studydf[,2:62]
 cor(testdata)
 
 qqnorm(studydf$W1_Paranoia1-studydf$W1_Paranoia5)
@@ -54,7 +44,8 @@ qqnorm(studydf$W1_CRT1-studydf$W1_CRT5)
 qqnorm(studydf$W1_Death_Anxiety_Total)
 qqnorm(studydf$W1_TotalCRT)
 #take religious belief out 2,4,6,8
-#CFA
+
+#The first model: CFA
 
 path1 <- '
 Paranoia =~ W1_Paranoia1 + W1_Paranoia2 + W1_Paranoia3 + W1_Paranoia4 + W1_Paranoia5
@@ -71,7 +62,7 @@ Nationalism ~~ 1* Nationalism + 0 * Paranoia
 cfamodel <- cfa(path1, data = studydf)
 summary(cfamodel, standardized = TRUE, fit.measures = TRUE, rsquare = T)
 #path
-semPaths(cfamodel, "std", layout = 'tree3', bifactor = "General", edge.color = "black", nCharNodes = 0)
+cfaDia<- semPaths(cfamodel, "std", layout = 'tree3', bifactor = "General", edge.color = "black", nCharNodes = 0)
 #std Factor Loadings
 inspect(cfamodel, what = "std", list.by.group = T)$lambda
 
@@ -94,13 +85,12 @@ Conspiracy ~~ 0*Religion
 bifactormodelbase <- cfa(path0, data = studydf)
 summary(bifactormodelbase, standardized = TRUE, fit.measures = TRUE, rsquare = T)
 fitmeasures(bifactormodelbase, c('cfi', 'tli','rmsea', 'rmsea.ci.upper', 'bic'))
-Bifactordia<- semPaths(bifactormodelbase, "std", layout = 'tree3', bifactor = "General", edge.color = "black", nCharNodes = 0)
-savePlot(Bifactordia, )
+bifactorDia<- semPaths(bifactormodelbase, "std", layout = 'tree3', bifactor = "General", edge.color = "black", nCharNodes = 0)
+
 #std factor loadings
-bifactormatrix<-inspect(bifactormodelbase, what = "std", list.by.group = T)$lambda
-bifactormatrix<
-#reliability
-datafactorbase <- predict(bifactormodelbase)
+bifactorloadings<-inspect(bifactormodelbase, what = "std", list.by.group = T)$lambda
+bifactorloadings
+#reliability: Alpha and Omega
 reliability(bifactormodelbase)
 compRelSEM(bifactormodelbase, tau.eq = F, ord.scale = T, return.total = T)
 
@@ -139,17 +129,17 @@ model_SEM_fit
 SEMDia <- semPaths(Fit_SEM, "std", layout = 'tree3', bifactor = "General", edge.color = "black", nCharNodes = 1) 
 
 #loading tables
-semmatrix<- inspect(Fit_SEM, what = "est", list.by.group = T)$lambda
+semloadings<- inspect(Fit_SEM, what = "est", list.by.group = T)$lambda
 #Reliability
 #omega
 reliabilityL2(Fit_SEM, "General" )
 reliabilityL2(Fit_SEM, "Paranoia" )
 reliabilityL2(Fit_SEM, "Conspiracy" )
 reliabilityL2(Fit_SEM, "Religion" )
-omegaFromSem(Fit_SEM)
 #alpha
 compRelSEM(Fit_SEM, obs.var = T, tau.eq = T)
 #Add into the SEM  to check the relationships between the variables
+
 #Regressions to run 
 #General ~ W1_Death_Anxiety_Total  + W1_TotalCRT + W1_Age_year + W1_Gender
 
