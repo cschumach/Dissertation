@@ -44,6 +44,7 @@
 * GPArotation 2022.4-1
 
 ### Folder Structure
+*cleaneddata = inlcudes the data used for final analysis
 * rawdata = 1 raw data set of the C19PRC dataset
 * 1 script called script
 * 1 R project file
