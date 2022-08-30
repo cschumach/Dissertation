@@ -25,7 +25,7 @@ studydf <- df %>% select(pid, W1_Paranoia1, W1_Paranoia2 , W1_Paranoia3, W1_Para
                          W1_DAI1, W1_DAI2,  W1_DAI3, W1_DAI4, W1_DAI5, W1_DAI6,  
                          W1_DAI7,  W1_DAI8,  W1_DAI9,  W1_DAI10,  W1_DAI11,  W1_DAI12,  W1_DAI13, W1_DAI14,  W1_DAI15,  W1_DAI16,  W1_DAI17,
                          W1_CRT1, W1_CRT2, W1_CRT3, W1_CRT4, W1_CRT5, W1_Gender, W1_Age_year, W1_Age_categories)
-
+write.csv(studydf, here("cleaneddata", "cleaneddata.csv"))
 #removing NA's
 is.na.data.frame(studydf)
 studydf <- na.omit(studydf)
